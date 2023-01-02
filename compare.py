@@ -30,13 +30,12 @@ def main():
         s1,s2="",""
         with open (s[0],"rt") as string:
             for text in string:
-             s1+=str(text.split(" "))
+             s1+=' '.join(text.split(" "))
         with open (s[1],"rt") as string:
            for text in string:
-             s2+=str(text.split(" "))
+             s2+=' '.join(text.split(" "))
         print(distance(str(s1),str(s2)))
-        print(str(s1),s2)
-    
+        
         
         
     
