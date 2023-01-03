@@ -14,6 +14,16 @@ import numpy as np
     
 #     def distance(self):
 #         pass
+def delete_element_from_list(lst,elem):
+    '''
+    удаляет все элементы со значением elem из списка lst
+    '''
+    while(True):
+        try:
+            lst.remove(elem)
+        except:
+            break
+            
 
 def main():
     
@@ -22,28 +32,40 @@ def main():
     paths=[]
     
 
-    with open (i,'rt') as p: #считываем входной файл, в paths записываем кортежные пары сравниваемых файлов
+    with open (i,'rt') as p: #считываем входной файл, в paths записываем кортежные пары названий сравниваемых файлов
         paths=[tuple(text_file.split(" ")) for text_file in p]
     
 
     for s in paths:
         s1,s2="",""
+        length1,length2=[],[]
         with open (s[0],"rt") as string:
             for text in string:
              s1+=' '.join(text.split(" "))
+             length1.append(text)
         with open (s[1],"rt") as string:
            for text in string:
              s2+=' '.join(text.split(" "))
-        print(distance(str(s1),str(s2)))
+             length2.append(text)
+
+        delete_element_from_list(length1,'\n')
+        delete_element_from_list(length2,'\n')
+        print(length1,length2)
+        print(1-distance(str(s1),str(s2))/len(s1))
         
         
         
     
     
+    with open (o,"w") as out:
+        pass
 
 
 def distance(s1, s2):
-    "Считает расстояние Левенштейна от а до b"
+    '''
+    Функция принимает 2 строки и считает
+    расстояние Левенштейна между ними
+    '''
     n, m = len(s1), len(s2)
     if n > m:
         
@@ -63,4 +85,5 @@ def distance(s1, s2):
 
 if __name__ == "__main__":
     main()
+    
     
