@@ -91,7 +91,8 @@ def main():
     
     
     with open (o,"w") as out:
-        pass
+        for res in result:
+            out.write(res)
 
 
 
