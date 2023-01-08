@@ -6,23 +6,22 @@ class File():
 
     '''
     Класс File
-
-    Содержит метод Levenstein для сравения похожести 2 строк
-
     '''
-    
-        
-        
+            
     def __init__(self,path) -> None:
         '''
         path - пути до 2 файлов
         передается кортежем или списком
         '''
+        
         self.__path=path
+        if self.__path[len(self.__path)-1:len(self.__path)]=='\n': 
+            self.__path=self.__path[:-1]
         self.__file=[]
-        with open (path ,"rt") as text:
+        with open (self.__path ,"rt") as text:
             string = ''
             for t in text:
+                              
                 self.__file.append(t)  
         delete_element_from_list(self.__file,'\n') # удаляем лишние переносы строк
     @property 
@@ -33,6 +32,8 @@ class File():
     def path(self):
         return self.__path
     
+      
+
 
 
 def delete_element_from_list(lst,elem):
@@ -44,10 +45,31 @@ def delete_element_from_list(lst,elem):
             lst.remove(elem)
         except:
             break
-
-def Levenstein(s1, s2):      
+def Levenstein(func):
     '''
-    Функция принимает 2 строки и считает
+    декоратор для функции, вычисляющей расстояние Левенштейна.
+    Дает возможность посчитать расстояние между многострочными текстами
+    '''
+    def wrapper(lst1,lst2):
+        result=0
+        if len(lst1)!=len(lst2):
+            min_str=lst2 if len(lst1)>len(lst2) else lst1
+            max_str=lst2 if len(lst1)<len(lst2) else lst1
+            for i in range(0,max(len(lst1), len(lst2))-min(len(lst1),len(lst2))): 
+                min_str.insert(i,max_str[i])  #добавили строчки, чтобы длина массивов была равна
+                    
+        for i in range(len(lst1)):
+            distance=func(lst1[i],lst2[i]) #построчно сравниваем массивы
+            result+=1-distance/max(len(lst1[i]),len(lst2[i]))
+        
+        return round(result/len(lst1),3) # получаем число <=1
+            
+    return wrapper
+
+@Levenstein
+def dist(s1, s2):      
+    '''
+    Функция принимает массива строк и считает
     расстояние Левенштейна между ними
     '''
     n, m = len(s1), len(s2)
@@ -69,8 +91,8 @@ def Levenstein(s1, s2):
 
 def main():
     
-    i = "input.txt"#input() #файл с указанием путей для файлов
-    o = "scores.txt"#input() #файл с итоговыми значениями
+    i = input() #файл с указанием путей для файлов
+    o = input() #файл с итоговыми значениями
     
     paths = [] # массив с указанием путей к файлам
     texts = [] # сравниваемые файлы
@@ -80,19 +102,16 @@ def main():
     
     for file in paths:
         arr = (File(file[0]),File(file[1])) 
-        #print(arr[0].get_file)
-    texts.append(arr)
+        texts.append(arr)
 
     
-    result=list( (len(arr[0].file[0]),len(arr[0].file[1])) for arr in texts)
-    print(result)
-        
-        
+    result=list(dist(arr[0].file,arr[1].file) for arr in texts)
+       
     
     
     with open (o,"w") as out:
         for res in result:
-            out.write(res)
+            out.write(str(res)+'\n')
 
 
 
@@ -100,5 +119,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
     
