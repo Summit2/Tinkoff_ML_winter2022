@@ -6,23 +6,22 @@ class File():
 
     '''
     Класс File
-
-    Содержит метод Levenstein для сравения похожести 2 строк
-
     '''
-    
-        
-        
+            
     def __init__(self,path) -> None:
         '''
         path - пути до 2 файлов
         передается кортежем или списком
         '''
+        
         self.__path=path
+        if self.__path[len(self.__path)-1:len(self.__path)]=='\n': 
+            self.__path=self.__path[:-1]
         self.__file=[]
-        with open (path ,"rt") as text:
+        with open (self.__path ,"rt") as text:
             string = ''
             for t in text:
+                              
                 self.__file.append(t)  
         delete_element_from_list(self.__file,'\n') # удаляем лишние переносы строк
     @property 
@@ -33,6 +32,8 @@ class File():
     def path(self):
         return self.__path
     
+      
+
 
 
 def delete_element_from_list(lst,elem):
@@ -44,10 +45,27 @@ def delete_element_from_list(lst,elem):
             lst.remove(elem)
         except:
             break
+def Levenstein(func):
+    def wrapper(lst1,lst2):
+        result=0
+        if len(lst1)!=len(lst2):
+            min_str=lst2 if len(lst1)>len(lst2) else lst1
+            max_str=lst2 if len(lst1)<len(lst2) else lst1
+            for i in range(0,max(len(lst1), len(lst2))-min(len(lst1),len(lst2))): 
+                min_str.insert(i,max_str[i])  #добавили строчки, чтобы длина массивов была равна
+                    
+        for i in range(len(lst1)):
+            distance=func(lst1[i],lst2[i]) #построчно сравниваем массивы
+            result+=1-distance/max(len(lst1[i]),len(lst2[i]))
+        
+        return result/len(lst1)
+            
+    return wrapper
 
-def Levenstein(s1, s2):      
+@Levenstein
+def dist(s1, s2):      
     '''
-    Функция принимает 2 строки и считает
+    Функция принимает массива строк и считает
     расстояние Левенштейна между ними
     '''
     n, m = len(s1), len(s2)
@@ -80,14 +98,14 @@ def main():
     
     for file in paths:
         arr = (File(file[0]),File(file[1])) 
-        #print(arr[0].get_file)
-    texts.append(arr)
+        texts.append(arr)
 
     
-    result=list( (len(arr[0].file[0]),len(arr[0].file[1])) for arr in texts)
+    result=list( dist(arr[0].file,arr[1].file) for arr in texts)
     print(result)
-        
-        
+    
+
+    
     
     
     with open (o,"w") as out:
